@@ -22,11 +22,18 @@ class Db_model extends CI_Model {
         return $query->result();
     }
 
-    function create_goal($user_id, $goal, $reward, $due_date)
+    function list_rewards()
+    {
+        $this->db->where('user_id', $this->tank_auth->get_user_id());
+        $query = $this->db->get('rewards');
+        return $query->result();
+    }
+
+    function create_goal($user_id, $goal, $points, $due_date)
     {
         $this->user_id      = $user_id;
         $this->goal         = $goal;
-        $this->reward       = $reward;
+        $this->points       = $points;
         $this->due_date     = $due_date;
         $this->start_date   = date("Y-m-d H:i:s");
 
@@ -36,12 +43,12 @@ class Db_model extends CI_Model {
     function create_reward($user_id, $reward, $points)
     {
         $this->user_id      = $user_id;
-        $this->goal         = $goal;
         $this->reward       = $reward;
-        $this->due_date     = $due_date;
-        $this->start_date   = date("Y-m-d H:i:s");
+        $this->points       = $points;
+        $this->created_date = date("Y-m_d H:m:s");
 
-        $this->db->insert('goals', $this);
+        $this->db->insert('rewards', $this);
+        return $this->db->insert_id();
     }
 
     function done_goal($id)
@@ -52,8 +59,10 @@ class Db_model extends CI_Model {
         $this->db->where('id', $id);
         $this->db->where('user_id', $this->tank_auth->get_user_id());
         $this->db->update('goals', $data);
-        /*$reward = get_reward($id);
-        echo "<!-- $reward -->";*/
+        $point_value = $this->get_goal_point_value($id);
+        $user_points = $this->get_user_points($this->tank_auth->get_user_id());
+        $user_points += $point_value;
+        $this->set_user_points($user_points, $this->tank_auth->get_user_id());
     }
 
     function get_reward($goal_id)
@@ -64,22 +73,57 @@ class Db_model extends CI_Model {
         return $query->result();
     }
 
-    function reward_goal($id)
+    function claim_reward($id)
     {
         $data = array(
             'rewarded_date' => date("Y-m-d H:i:s")
         );
         $this->db->where('id', $id);
-        $this->db->where('user_id', $this->tank_auth->get_user_id());
-        $this->db->update('goals', $data);
+        $this->db->update('rewards', $data);
+        $point_cost = $this->get_reward_point_cost($id);
+        $user_points = $this->get_user_points($this->tank_auth->get_user_id());
+        $user_points -= $point_cost;
+        $this->set_user_points($user_points, $this->tank_auth->get_user_id());
     }
 
-    function increase_points($num)
+    function get_reward_point_cost($reward_id)
     {
-        $data = 'points=points + '.$num;
-        $this->db->where('id', $this->tank_auth->get_user_id());
+        $this->db->select('points');
+        $this->db->from('rewards');
+        $this->db->where('id', $reward_id);
+        $query = $this->db->get();
+        $result = $query->result();
+        $result = $result[0]->points;
+        return $result;
+    }
+
+    function get_goal_point_value($goal_id)
+    {
+        $this->db->select('points');
+        $this->db->from('goals');
+        $this->db->where('id', $goal_id);
+        $query = $this->db->get();
+        $result = $query->result();
+        $result = $result[0]->points;
+        return $result;
+    }
+
+    function set_user_points($num,$user_id)
+    {
+        $data = array(
+            'points' => $num
+        );
+
+        $this->db->where('id', $user_id);
         $this->db->update('users', $data);
     }
+
+    /*function adjust_points($num,$user_id)
+    {
+        $points = $this->get_user_points($user_id);
+        $points = $points + $num;
+        $this->set_user_points($points, $user_id);
+    }*/
 
     function get_subscribed_status()
     {
@@ -131,6 +175,17 @@ class Db_model extends CI_Model {
         $this->db->where('activated', 1);
         $query = $this->db->get();
         return $query->result();
+    }
+
+    function get_user_points($user_id)
+    {
+        $this->db->select('points');
+        $this->db->from('users');
+        $this->db->where('id', $user_id);
+        $query = $this->db->get();
+        $points = $query->result();
+        $points = $points[0]->points;
+        return $points;
     }
 
     function get_goals_to_notify()
@@ -191,5 +246,14 @@ class Db_model extends CI_Model {
         $this->db->order_by("user_id");
         $query = $this->db->get();
         return $query->result();
+    }
+
+    function add_user_points($points)
+    {
+        $data = array(
+            'points' => "points + $points"
+        );
+        $this->db->where('user_id', $this->tank_auth->get_user_id());
+        $this->db->update('users', $data);
     }
 }

@@ -58,34 +58,36 @@ function relativeTime($time) {
 ?>
 <div class="container">
 	<h1><?php echo $heading;?></h1>
+    <h4 id="pointsLeft">You have <?php echo $points; ?> point<?php echo $points==1?"":"s" ?></h4>
     <table id="goalsTable" class="table table-border tablesorter">
         <thead>
             <tr>
-                <th></div>Goal<div class="icon-arrow-down"/></th>
-                <th>Value<div class="icon-arrow-down"/></th>
-                <th>Due Date<div class="icon-arrow-down"/></th>
-                <th>Completed?<div class="icon-arrow-down"/></th>
+                <th></div>Reward<div class="icon-arrow-down"/></th>
+                <th>Points<div class="icon-arrow-down"/></th>
+                <th>Claimed?<div class="icon-arrow-down"/></th>
             </tr>
         </thead>
-        <?php foreach($goals as $goal): ?>
+        <?php foreach($rewards as $reward): ?>
         <tr>
-            <td><?php echo $goal->goal; ?></td>
-            <td><?php echo $goal->points; ?> Point<?php echo $goal->points==1?"":"s" ?></td>
-            <td><?php
-                echo date("Y-m-d",strtotime($goal->due_date));
-                //echo relativeTime(strtotime($goal->due_date)+(60*60*24));
-                ?></td>
-            <td id="form<?php echo $goal->id;?>">
-            <?php if($goal->completed_date != ''):?>
-                <p class="btn btn-disabled span2">Complete!</p>
+            <td><?php echo $reward->reward; ?></td>
+            <td><?php echo $reward->points; ?> Point<?php echo $reward->points==1?"":"s" ?></td>
+            <td id="form<?php echo $reward->id;?>">
+            <?php if($reward->rewarded_date != ''):?>
+                <p class="btn btn-disabled span2">Claimed!</p>
             <?php else: ?>
-                <a onclick="done(<?php echo $goal->id; ?>)" class="btn btn-primary span2">Mark&nbsp;Done</a>
+                <a onclick="done(<?php echo $reward->id; ?>)" class="btn btn-primary span2">Claim</a>
             <?php endif; ?></td>
         </tr>
         <?php endforeach; ?>
     </table>
 </div>
 <script type="text/javascript">
+    var rewards={
+        <?php foreach($rewards as $reward): ?>
+        <?php echo $reward->id;?>:<?php echo $reward->points;?>,
+        <?php endforeach; ?>
+    },
+    points=<?php echo $points;?>;
     $(document).ready(function()
         {
             $("#goalsTable").tablesorter();
@@ -93,8 +95,19 @@ function relativeTime($time) {
     );
     function done(val)
     {
-        $.post('/ajax/done', {done:val}, function(data) {
-            $('#form'+val).html(data);
-        });
+        var pointCost = rewards[val];
+        if(pointCost <= points)
+        {
+            points-=pointCost;
+            $('#form'+val).html('<p class="btn btn-primary span2 disabled">Claiming...</p>');
+            $.post('/ajax/reward', {reward:val}, function(data) {
+                $('#form'+val).html(data);
+            });
+            $("#pointsLeft").html("You have "+points+" point"+(points==1?"":"s"));
+        }
+        else
+        {
+            alert("You only have "+points+" points and you need "+pointCost+" points.\nFinish a goal first.");
+        }
     }
 </script>

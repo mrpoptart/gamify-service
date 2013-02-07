@@ -23,6 +23,7 @@
         </fieldset>
         <button type="submit" class="btn btn-primary">Log In</button>
         <a href="/auth/register" class="btn">Register</a>
+        <a href="/auth/forgot_password" class="btn">Forgot&nbsp;Password</a>
     </form>
 </div>
 <script type="text/javascript">

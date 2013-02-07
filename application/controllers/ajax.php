@@ -12,32 +12,44 @@ class Ajax extends CI_Controller {
             //redirect them to the login page
             redirect('auth/login', 'refresh');
         }
+        else
+        {
+            $this->load->model('Db_model');
+        }
     }
 
     public function done()
     {
-        $this->load->model('Db_model');
         if($_POST)
         {
             if($_POST['done'])
             {
                 $this->Db_model->done_goal($_POST['done']);
-                echo '<a href="javascript:void" onclick="reward('.$_POST['done'].')" class="btn btn-success">Claim Reward</a>';
+                echo '<p class="btn btn-disabled span2">Complete!</p>';
             }
         }
     }
 
     public function reward()
     {
-        $this->load->model('Db_model');
         if($_POST)
         {
             if($_POST['reward'])
             {
-                $this->Db_model->reward_goal($_POST['reward']);
+                $id = $_POST['reward'];
+                echo '<p class="btn btn-disabled span2">Claimed!</p>';
+                $this->Db_model->claim_reward($id);
             }
         }
-        echo 'Goal Complete!';
+    }
+
+    public function adjust_points($val)
+    {
+        $points = $this->Db_model->get_points();
+        echo $points."<br>";
+        $this->Db_model->adjust_points($val);
+        $points = $this->Db_model->get_points();
+        echo $points."<br>";
     }
 }
 

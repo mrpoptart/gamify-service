@@ -99,7 +99,6 @@ class Auth extends CI_Controller
                 }
             }
             $data['title']="Gamify";
-            $data['active_login']=TRUE;
             $this->load->view('header_view', $data);
             $this->load->view('auth/login_form', $data);
             $this->load->view('footer_view', $data);
@@ -220,7 +219,6 @@ class Auth extends CI_Controller
             $data['use_recaptcha'] = $use_recaptcha;
 
             $data['title'] = "Gamify";
-            $data['active_register'] = TRUE;
             $this->load->view('header_view', $data);
             $this->load->view('auth/register_form', $data);
             $this->load->view('footer_view', $data);
@@ -324,7 +322,6 @@ class Auth extends CI_Controller
                 }
             }
             $data['title']="Gamify Authentication";
-            $data['active_forgot']=TRUE;
             $this->load->view('header_view', $data);
             $this->load->view('auth/forgot_password_form', $data);
             $this->load->view('footer_view', $data);

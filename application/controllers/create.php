@@ -14,21 +14,20 @@ class Create extends CI_Controller {
         }
     }
 
-	public function index()
-	{
-        $data['active_create'] = TRUE;
-        if($_POST && $_POST['goal'] && $_POST['reward'] && $_POST['due_date'])
+    public function goal()
+    {
+        if($_POST && $_POST['goal'] && $_POST['points'] && $_POST['due_date'])
         {
             $goal = $_POST['goal'];
-            $reward = $_POST['reward'];
+            $points = $_POST['points'];
             $due_date = $_POST['due_date'];
 
             $this->load->model('Db_model');
-            $this->Db_model->create_goal($this->tank_auth->get_user_id(), $goal, $reward, $due_date);
+            $this->Db_model->create_goal($this->tank_auth->get_user_id(), $goal, $points, $due_date);
             $data['title'] = 'Gamification';
             $data['heading'] = 'Creation Complete. Create another?';
             $this->load->view('header_view', $data);
-            $this->load->view('create_view', $data);
+            $this->load->view('create_goal_view', $data);
             $this->load->view('footer_view', $data);
         }
         else
@@ -36,10 +35,35 @@ class Create extends CI_Controller {
             $data['title'] = 'Gamify - Create a new Goal for '.$this->tank_auth->get_username();
             $data['heading'] = 'Create a New Goal';
             $this->load->view('header_view', $data);
-            $this->load->view('create_view', $data);
+            $this->load->view('create_goal_view', $data);
             $this->load->view('footer_view', $data);
         }
-	}
+    }
+
+    public function reward()
+    {
+        if($_POST && $_POST['points'] && $_POST['reward'])
+        {
+            $points = $_POST['points'];
+            $reward = $_POST['reward'];
+
+            $this->load->model('Db_model');
+            $this->Db_model->create_reward($this->tank_auth->get_user_id(), $reward, $points);
+            $data['title'] = 'Gamification';
+            $data['heading'] = 'Reward Created. Create another?';
+            $this->load->view('header_view', $data);
+            $this->load->view('create_reward_view', $data);
+            $this->load->view('footer_view', $data);
+        }
+        else
+        {
+            $data['title'] = 'Gamify - Create a new reward for '.$this->tank_auth->get_username();
+            $data['heading'] = 'Create a New Reward';
+            $this->load->view('header_view', $data);
+            $this->load->view('create_reward_view', $data);
+            $this->load->view('footer_view', $data);
+        }
+    }
 }
 
 /* End of file welcome_view.php */
