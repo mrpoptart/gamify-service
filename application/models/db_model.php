@@ -51,18 +51,19 @@ class Db_model extends CI_Model {
         return $this->db->insert_id();
     }
 
-    function done_goal($id)
+    function done_goal($goal_id)
     {
         $data = array(
             'completed_date' => date("Y-m-d H:i:s")
         );
-        $this->db->where('id', $id);
+        $this->db->where('id', $goal_id);
         $this->db->where('user_id', $this->tank_auth->get_user_id());
         $this->db->update('goals', $data);
-        $point_value = $this->get_goal_point_value($id);
-        $user_points = $this->get_user_points($this->tank_auth->get_user_id());
+        $point_value = $this->get_goal_point_value($goal_id);
+        $user_id = $this->get_goal_user($goal_id);
+        $user_points = $this->get_user_points($user_id);
         $user_points += $point_value;
-        $this->set_user_points($user_points, $this->tank_auth->get_user_id());
+        $this->set_user_points($user_points, $user_id);
     }
 
     function get_reward($goal_id)
@@ -73,17 +74,18 @@ class Db_model extends CI_Model {
         return $query->result();
     }
 
-    function claim_reward($id)
+    function claim_reward($reward_id)
     {
         $data = array(
             'rewarded_date' => date("Y-m-d H:i:s")
         );
-        $this->db->where('id', $id);
+        $this->db->where('id', $reward_id);
         $this->db->update('rewards', $data);
-        $point_cost = $this->get_reward_point_cost($id);
-        $user_points = $this->get_user_points($this->tank_auth->get_user_id());
+        $point_cost = $this->get_reward_point_cost($reward_id);
+        $user_id = $this->get_reward_user($reward_id);
+        $user_points = $this->get_user_points($user_id);
         $user_points -= $point_cost;
-        $this->set_user_points($user_points, $this->tank_auth->get_user_id());
+        $this->set_user_points($user_points, $user_id);
     }
 
     function get_reward_point_cost($reward_id)
@@ -94,6 +96,28 @@ class Db_model extends CI_Model {
         $query = $this->db->get();
         $result = $query->result();
         $result = $result[0]->points;
+        return $result;
+    }
+
+    function get_reward_user($reward_id)
+    {
+        $this->db->select('user_id');
+        $this->db->from('rewards');
+        $this->db->where('id', $reward_id);
+        $query = $this->db->get();
+        $result = $query->result();
+        $result = $result[0]->user_id;
+        return $result;
+    }
+
+    function get_goal_user($goal_id)
+    {
+        $this->db->select('user_id');
+        $this->db->from('goals');
+        $this->db->where('id', $goal_id);
+        $query = $this->db->get();
+        $result = $query->result();
+        $result = $result[0]->user_id;
         return $result;
     }
 
@@ -125,13 +149,15 @@ class Db_model extends CI_Model {
         $this->set_user_points($points, $user_id);
     }*/
 
-    function get_subscribed_status()
+    function get_user_subscribed_status($user_id)
     {
         $this->db->select('subscribed');
         $this->db->from('users');
-        $this->db->where('id', $this->tank_auth->get_user_id());
+        $this->db->where('id', $user_id);
         $query = $this->db->get();
-        return $query->result();
+        $result = $query->result();
+        $result = $result[0]->subscribed;
+        return $result;
     }
 
     function update_timezone($timezone_offset)

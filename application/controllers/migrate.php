@@ -6,8 +6,16 @@ class Migrate extends CI_Controller {
     {
         // Call the Model constructor
         parent::__construct();
-        $this->load->helper('url');
-        $this->load->model('Db_model');
+        if (!$this->tank_auth->is_logged_in() || $this->tank_auth->get_user_id() != 1)
+        {
+            //redirect them to the login page
+            redirect('auth/login', 'refresh');
+        }
+        else
+        {
+            $this->load->helper('url');
+            $this->load->model('Db_model');
+        }
     }
 
     public function rewards_from_goals()
@@ -15,28 +23,34 @@ class Migrate extends CI_Controller {
         $goals=$this->Db_model->get_all_user_goals();
         foreach($goals as $goal)
         {
-            $user_id = $goal->user_id;
-            $reward = $goal->reward;
-            $points=$this->Db_model->get_user_points($goal->user_id);
-            $insert_id = $this->Db_model->create_reward($user_id, $reward, 1);
-            echo $insert_id." - ";
-            if($goal->completed_date != "")
+            if(preg_match("/[0-9] point[s]*/i", $goal->reward))
             {
-                echo "Complete, increasing by 1";
-                $points++;
+                echo "This reward doesn't really count, it's only a point";
             }
-            if($goal->rewarded_date != "")
+            else
             {
-                $points--;
-                echo ", but resolved, so subtracting 1";
-                $this->Db_model->claim_reward($insert_id);
+                $insert_id = $this->Db_model->create_reward($goal->user_id, $goal->reward, 1);
+                echo "created reward $insert_id for user $goal->user_id";
+
+                if($goal->completed_date != "")
+                {
+                    echo ". It was completed for 1 point";
+                    $points=$this->Db_model->get_user_points($goal->user_id);
+                    $this->Db_model->set_user_points($points+1,$goal->user_id);
+
+                    if($goal->rewarded_date != "")
+                    {
+                        //decrements points
+                        echo " and already rewarded and that point was spent";
+                        $this->Db_model->claim_reward($insert_id);
+                    }
+                }
+                else
+                {
+                    echo " and it hasn't been completed yet";
+                }
             }
-            if($points<0)
-            {
-                $points=0;
-            }
-            $this->Db_model->set_user_points($points,$goal->user_id);
-            echo ", producing ".$this->Db_model->get_user_points($goal->user_id);
+            echo ", so they now have ".$this->Db_model->get_user_points($goal->user_id)." points";
             echo " <br>";
         }
     }

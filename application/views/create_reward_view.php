@@ -4,7 +4,7 @@
         <form action="/create/reward" method="post">
             <fieldset>
                 <label class='control-label'>What's your reward?</label>
-                <input class="span6" type="text" name="reward">
+                <input class="span6" type="text" name="reward" placeholder="suggestion: <?php echo $suggestion;?>">
                 <label class='control-label'>How many points will it cost?</label>
                 <div class=" input-prepend input-append">
                     <div class="btn-group">

@@ -33,9 +33,7 @@ class Subscription extends CI_Controller {
         }
 
 
-        $subscribed = $this->Db_model->get_subscribed_status();
-        $subscribed = $subscribed[0];
-        $subscribed = $subscribed->subscribed;
+        $subscribed = $this->Db_model->get_user_subscribed_status($this->tank_auth->get_user_id());
 
         /*echo "<!--";
         print_r($data);

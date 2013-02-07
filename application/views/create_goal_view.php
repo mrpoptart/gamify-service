@@ -4,8 +4,8 @@
         <form action="/create/goal" method="post">
             <fieldset>
                 <label class='control-label'>What's your goal?</label>
-                <input class="span6" type="text" name="goal">
-                <label class='control-label'>When is it due?</label>
+                <input class="span6" type="text" name="goal" placeholder="suggestion: <?php echo $suggestion; ?>">
+                <label class='control-label'>When is it due?<?php echo $subscribed?" We'll send you a reminder that morning":" We won't remind you unless you <a href='/subscription'>re-subscribe</a>";?>.</label>
                 <input class="span6" type="text" name="due_date" data-datepicker-format="yyyy-mm-dd" data-datepicker-nodefault="false" />
                 <label class='control-label'>How many points is it worth?</label>
                 <div class=" input-prepend input-append">

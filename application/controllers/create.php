@@ -16,13 +16,18 @@ class Create extends CI_Controller {
 
     public function goal()
     {
+        $this->load->model('Db_model');
+        $subscribed=$this->Db_model->get_user_subscribed_status($this->tank_auth->get_user_id());
+        $data['subscribed']=$subscribed;
+
+        $this->load->model('Suggestion_model');
+        $data['suggestion']=$this->Suggestion_model->get_goal_suggestion();
         if($_POST && $_POST['goal'] && $_POST['points'] && $_POST['due_date'])
         {
             $goal = $_POST['goal'];
             $points = $_POST['points'];
             $due_date = $_POST['due_date'];
 
-            $this->load->model('Db_model');
             $this->Db_model->create_goal($this->tank_auth->get_user_id(), $goal, $points, $due_date);
             $data['title'] = 'Gamification';
             $data['heading'] = 'Creation Complete. Create another?';
@@ -42,6 +47,8 @@ class Create extends CI_Controller {
 
     public function reward()
     {
+        $this->load->model('Suggestion_model');
+        $data['suggestion']=$this->Suggestion_model->get_reward_suggestion();
         if($_POST && $_POST['points'] && $_POST['reward'])
         {
             $points = $_POST['points'];
