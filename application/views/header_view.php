@@ -3,19 +3,26 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <title><?php echo $title;?></title>
     <!-- Bootstrap -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
-    <link href="/css/datepicker.css" rel="stylesheet" media="screen">
-    <link href="/css/gamify.css" rel="stylesheet" media="screen">
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"/>
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap-responsive.min.css"/>
+    <link type="text/css" rel="stylesheet" href="/css/datepicker.css"/>
+    <link type="text/css" rel="stylesheet" href="/css/gamify.css"/>
+    <link type="text/css" rel="stylesheet" href="/css/simple-slider.css"/>
+
+
     <script src="http://code.jquery.com/jquery-latest.js"></script>
+
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/datepicker.js"></script>
     <script src="/js/jquery.tablesorter.min.js"></script>
     <script src="/js/prettydate.js"></script>
+    <script src="/js/simple-slider.min.js"></script>
 </head>
-<body>
+<body data-role="page">
 <div class="navbar navbar-static-top">
     <div class="navbar-inner">
         <?php if($this->tank_auth->is_logged_in()):?>
