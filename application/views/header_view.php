@@ -11,7 +11,7 @@
     <link type="text/css" rel="stylesheet" href="/css/bootstrap-responsive.min.css"/>
     <link type="text/css" rel="stylesheet" href="/css/datepicker.css"/>
     <link type="text/css" rel="stylesheet" href="/css/gamify.css"/>
-    <link type="text/css" rel="stylesheet" href="/css/simple-slider.css"/>
+
 
 
     <script src="http://code.jquery.com/jquery-latest.js"></script>
@@ -19,8 +19,6 @@
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/datepicker.js"></script>
     <script src="/js/jquery.tablesorter.min.js"></script>
-    <script src="/js/prettydate.js"></script>
-    <script src="/js/simple-slider.min.js"></script>
 </head>
 <body data-role="page">
 <div class="navbar navbar-static-top">
