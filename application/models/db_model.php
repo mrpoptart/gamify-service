@@ -165,14 +165,14 @@ class Db_model extends CI_Model {
         $this->Db_model->update_one('timezone_offset', $timezone_offset, 'id', $this->tank_auth->get_user_id(), 'users');
     }
 
-    function unsubscribe()
+    function unsubscribe($user_id)
     {
-        $this->Db_model->update_one('subscribed', 0, 'id', $this->tank_auth->get_user_id(), 'users');
+        $this->Db_model->update_one('subscribed', 0, 'id', $user_id, 'users');
     }
 
-    function subscribe()
+    function subscribe($user_id)
     {
-        $this->Db_model->update_one('subscribed', 1, 'id', $this->tank_auth->get_user_id(), 'users');
+        $this->Db_model->update_one('subscribed', 1, 'id', $user_id, 'users');
     }
 
     function notify($goal_id)
@@ -214,21 +214,23 @@ class Db_model extends CI_Model {
         return $points;
     }
 
-    function get_goals_to_notify()
+    function get_goals_to_notify($current_hour,$ignore_notified=TRUE)
     {
-        $current_hour = date("H");
         $positive_offset = (int) $current_hour * 60;
         $negative_offset = ((int) $current_hour - 24) * 60;
 
         $today = date("Y-m-d");
         $tomorrow = date("Y-m-d", $tomorrow = mktime(0,0,0,date("m"),date("d")+1,date("Y")));
 
-        $this->db->select('users.id user_id, goals.id goal_id, email, username, timezone_offset, due_date, completed_date, rewarded_date, goal, reward');
+        $this->db->select('users.id user_id, password, goals.points points, goals.id goal_id, email, username, timezone_offset, due_date, completed_date, rewarded_date, goal');
         $this->db->from('users');
         $this->db->join('goals', 'goals.user_id = users.id');
         $this->db->where('subscribed', 1);
         $this->db->where('activated', 1);
-        $this->db->where('notified', 0);
+        if($ignore_notified)
+        {
+            $this->db->where('notified', 0);
+        }
         $this->db->where('completed_date IS NULL');
         $this->db->where("((timezone_offset = $positive_offset AND due_date <= '$today') OR (timezone_offset = $negative_offset AND due_date <= '$tomorrow'))");
         $this->db->order_by("user_id");
@@ -236,9 +238,9 @@ class Db_model extends CI_Model {
         return $query->result();
     }
 
-    function get_goals()
+    function get_incomplete_goals()
     {
-        $this->db->select('users.id user_id, goals.id goal_id, email, username, timezone_offset, due_date, completed_date, rewarded_date, goal, reward');
+        $this->db->select('users.id user_id, password, goals.points points, goals.id goal_id, email, username, timezone_offset, due_date, completed_date, rewarded_date, goal');
         $this->db->from('users');
         $this->db->join('goals', 'goals.user_id = users.id');
         $this->db->where('subscribed', 1);
@@ -251,7 +253,7 @@ class Db_model extends CI_Model {
 
     function get_all_user_goals()
     {
-        $this->db->select('*');
+        $this->db->select('users.id user_id, password, goals.points points, goals.id goal_id, email, username, timezone_offset, due_date, completed_date, rewarded_date, goal');
         $this->db->from('users');
         $this->db->join('goals', 'goals.user_id = users.id');
         $this->db->where('activated', 1);
@@ -281,5 +283,16 @@ class Db_model extends CI_Model {
         );
         $this->db->where('user_id', $this->tank_auth->get_user_id());
         $this->db->update('users', $data);
+    }
+
+    function get_user_hash($user_id)
+    {
+        $this->db->select('password');
+        $this->db->from('users');
+        $this->db->where('id', $user_id);
+        $query = $this->db->get();
+        $result = $query->result();
+        $result = $result[0]->password;
+        return $result;
     }
 }

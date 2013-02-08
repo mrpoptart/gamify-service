@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Migrate extends CI_Controller {
+class Admin extends CI_Controller {
 
     function __construct()
     {
@@ -54,23 +54,9 @@ class Migrate extends CI_Controller {
             echo " <br>";
         }
     }
-
-    public function add_points_to_goals()
+    public function notify_users()
     {
 
-    }
-
-    public function reward()
-    {
-        $this->load->model('Db_model');
-        if($_POST)
-        {
-            if($_POST['reward'])
-            {
-                $this->Db_model->reward_goal($_POST['reward']);
-            }
-        }
-        echo 'Goal Complete!';
     }
 }
 
