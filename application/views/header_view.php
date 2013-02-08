@@ -8,6 +8,7 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
     <link href="/css/datepicker.css" rel="stylesheet" media="screen">
+    <link href="/css/gamify.css" rel="stylesheet" media="screen">
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/datepicker.js"></script>
@@ -20,13 +21,17 @@
         <?php if($this->tank_auth->is_logged_in()):?>
         <ul class="nav">
             <li class="<?php echo $this->uri->segment(1)=="create"&&$this->uri->segment(2)=="goal"?"active":""; ?>"><a href='/create/goal'>New Goal</a></li>
+            <li class="divider-vertical"></li>
             <li class="<?php echo $this->uri->segment(1)=="create"&&$this->uri->segment(2)=="reward"?"active":""; ?>"><a href='/create/reward'>New reward</a></li>
+            <li class="divider-vertical"></li>
             <li class="<?php echo $this->uri->segment(1)=="goals"?"active":""; ?>"><a href='/goals'>Goals</a></li>
+            <li class="divider-vertical"></li>
             <li class="<?php echo $this->uri->segment(1)=="rewards"?"active":""; ?>"><a href='/rewards'>Rewards</a></li>
         </ul>
         <?php else: ?>
             <ul class="nav">
                 <li class="<?php echo $this->uri->segment(2)=="login"?"active":""; ?>"><a href='/auth/login'>Login</a></li>
+                <li class="divider-vertical"></li>
                 <li class="<?php echo $this->uri->segment(2)=="register"?"active":""; ?>"><a href='/auth/register'>Register</a></li>
             </ul>
         <?php endif;?>
