@@ -17,26 +17,50 @@ class Goals extends CI_Controller {
 
 	public function index()
 	{
+        $data['title'] = 'Gamify - Goals for '.$this->tank_auth->get_username();
+        $this->load->view('header_view', $data);
+
         $this->load->model('Db_model');
+        $this->load->library('form_validation');
+
         if($_POST)
         {
-            if(@$_POST['done'])
+            $this->form_validation->set_rules('goal', 'Goal', 'required');
+            $this->form_validation->set_rules('points', 'Points', 'required');
+            $this->form_validation->set_rules('due_date', 'Due Date', 'required');
+
+            if($this->form_validation->run())
             {
-                $this->Db_model->done_goal($_POST['done']);
+                $goal = $_POST['goal'];
+                $points = $_POST['points'];
+                $due_date = $_POST['due_date'];
+
+                $this->Db_model->create_goal($this->tank_auth->get_user_id(), $goal, $points, $due_date);
+                $data['heading'] = 'Creation Complete. Create another?';
             }
-            if(@$_POST['reward'])
+            else
             {
-                $this->Db_model->reward_goal($_POST['reward']);
+                $data['heading'] = 'Create A New Goal';
             }
+        }
+        else
+        {
+            $data['heading'] = 'Create A New Goal';
         }
         $goals = $this->Db_model->list_goals();
 
-        $data['title'] = 'Gamify - Goals for '.$this->tank_auth->get_username();
-        $data['heading'] = 'List of Goals';
         $data['goals'] = $goals;
+        $data['points'] = $this->Db_model->get_user_points($this->tank_auth->get_user_id());
+
+        $subscribed=$this->Db_model->get_user_subscribed_status($this->tank_auth->get_user_id());
+        $data['subscribed']=$subscribed;
+
+        $this->load->model('Suggestion_model');
+        $data['suggestion']=$this->Suggestion_model->get_goal_suggestion();
+
         $data['active_goals'] = TRUE;
 
-        $this->load->view('header_view', $data);
+        $this->load->view('create_goal_view', $data);
         $this->load->view('goals_view', $data);
         $this->load->view('footer_view', $data);
 	}

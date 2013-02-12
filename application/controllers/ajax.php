@@ -51,6 +51,18 @@ class Ajax extends CI_Controller {
         $points = $this->Db_model->get_points();
         echo $points."<br>";
     }
+
+    public function get_goal_suggestion()
+    {
+        $this->load->model('Suggestion_model');
+        echo $this->Suggestion_model->get_goal_suggestion();
+    }
+
+    public function get_reward_suggestion()
+    {
+        $this->load->model('Suggestion_model');
+        echo $this->Suggestion_model->get_reward_suggestion();
+    }
 }
 
 /* End of file welcome_view.php */

@@ -17,17 +17,46 @@ class Rewards extends CI_Controller {
 
 	public function index()
 	{
-        $this->load->model('Db_model');
-        $rewards = $this->Db_model->list_rewards();
-        $points = $this->Db_model->get_user_points($this->tank_auth->get_user_id());
-
         $data['title'] = 'Gamify - Rewards for '.$this->tank_auth->get_username();
-        $data['heading'] = 'List of Rewards';
+        $this->load->view('header_view', $data);
+
+        $this->load->model('Db_model');
+        $this->load->library('form_validation');
+
+
+        if($_POST)
+        {
+
+            $this->form_validation->set_rules('reward', 'Reward', 'required');
+            $this->form_validation->set_rules('points', 'Points', 'required');
+
+            if($this->form_validation->run())
+            {
+                $points = $_POST['points'];
+                $reward = $_POST['reward'];
+                $this->Db_model->create_reward($this->tank_auth->get_user_id(), $reward, $points);
+                $data['heading'] = 'Reward Created. Create another?';
+            }
+            else
+            {
+                $data['heading'] = 'Create A New Reward';
+            }
+        }
+        else
+        {
+            $data['heading'] = 'Create A New Reward';
+        }
+
+        $rewards = $this->Db_model->list_rewards();
+
         $data['rewards'] = $rewards;
-        $data['points'] = $points;
+        $data['points'] = $this->Db_model->get_user_points($this->tank_auth->get_user_id());
         $data['active_rewards'] = TRUE;
 
-        $this->load->view('header_view', $data);
+        $this->load->model('Suggestion_model');
+        $data['suggestion']=$this->Suggestion_model->get_reward_suggestion();
+
+        $this->load->view('create_reward_view', $data);
         $this->load->view('rewards_view', $data);
         $this->load->view('footer_view', $data);
 	}

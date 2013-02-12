@@ -25,10 +25,6 @@
     <div class="navbar-inner">
         <?php if($this->tank_auth->is_logged_in()):?>
         <ul class="nav">
-            <li class="<?php echo $this->uri->segment(1)=="create"&&$this->uri->segment(2)=="goal"?"active":""; ?>"><a href='/create/goal'>New Goal</a></li>
-            <li class="divider-vertical"></li>
-            <li class="<?php echo $this->uri->segment(1)=="create"&&$this->uri->segment(2)=="reward"?"active":""; ?>"><a href='/create/reward'>New reward</a></li>
-            <li class="divider-vertical"></li>
             <li class="<?php echo $this->uri->segment(1)=="goals"?"active":""; ?>"><a href='/goals'>Goals</a></li>
             <li class="divider-vertical"></li>
             <li class="<?php echo $this->uri->segment(1)=="rewards"?"active":""; ?>"><a href='/rewards'>Rewards</a></li>

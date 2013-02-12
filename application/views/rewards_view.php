@@ -57,21 +57,21 @@ function relativeTime($time) {
 }*/
 ?>
 <div class="container">
-	<h1><?php echo $heading;?></h1>
+	<h1>Rewards for <?php echo $this->tank_auth->get_username() ?></h1>
     <h4 id="pointsLeft">You have <?php echo $points; ?> point<?php echo $points==1?"":"s" ?></h4>
-    <table id="goalsTable" class="table table-border tablesorter">
+    <table id="goalsTable" class="table table-border tablesorter table-striped">
         <thead>
             <tr>
                 <th></div>Reward<div class="icon-arrow-down"/></th>
-                <th>Points<div class="icon-arrow-down"/></th>
-                <th>Claimed?<div class="icon-arrow-down"/></th>
+                <th class="span1">Points<div class="icon-arrow-down"/></th>
+                <th class="span2 centered">Claimed?<div class="icon-arrow-down"/></th>
             </tr>
         </thead>
         <?php foreach($rewards as $reward): ?>
         <tr>
             <td><?php echo $reward->reward; ?></td>
-            <td><?php echo $reward->points; ?> Point<?php echo $reward->points==1?"":"s" ?></td>
-            <td id="form<?php echo $reward->id;?>">
+            <td><?php echo $reward->points; ?>&nbsp;Point<?php echo $reward->points==1?"":"s" ?></td>
+            <td id="form<?php echo $reward->id;?>" class="span2">
             <?php if($reward->rewarded_date != ''):?>
                 <p class="btn btn-disabled span2">Claimed!</p>
             <?php else: ?>

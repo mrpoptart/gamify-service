@@ -30,6 +30,14 @@ class Suggestion_model extends CI_Model {
         array_push($suggestions,"find that perfect gift");
         array_push($suggestions,"call a friend");
         array_push($suggestions,"write a letter");
+        array_push($suggestions,"volunteer");
+        array_push($suggestions,"learn to program");
+        array_push($suggestions,"memorize a poem");
+        array_push($suggestions,"take a class");
+        array_push($suggestions,"build a website");
+        array_push($suggestions,"get better at touch typing");
+        array_push($suggestions,"learn an opening move in chess");
+        array_push($suggestions,"practice an instrument");
         return $suggestions[array_rand($suggestions)];
     }
 
@@ -44,6 +52,12 @@ class Suggestion_model extends CI_Model {
         array_push($rewards,"go see a friend");
         array_push($rewards,"road trip");
         array_push($rewards,"watch an episode of tv");
+        array_push($rewards,"5$ toward visiting someone");
+        array_push($rewards,"post a tweet");
+        array_push($rewards,"a new tool");
+        array_push($rewards,"a kitchen gadget");
+        array_push($rewards,"a new cd");
+        array_push($rewards,"a new movie");
         return $rewards[array_rand($rewards)];
     }
 
